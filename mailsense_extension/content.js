@@ -5,13 +5,19 @@
 
 // Function to notify background to fetch emails
 const notifyBackground = () => {
-  try {
-    chrome.runtime.sendMessage({ action: "fetchEmails" });
-    console.log("Notified background to fetch emails...");
-  } catch (err) {
-    console.warn("Could not send message (context invalidated)", err);
+  if (chrome.runtime && chrome.runtime.id) {  // check context is valid
+    chrome.runtime.sendMessage({ action: "fetchEmails" }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.warn("Message failed:", chrome.runtime.lastError.message);
+      } else {
+        console.log("Notified background to fetch emails...");
+      }
+    });
+  } else {
+    console.warn("Extension context not valid yet");
   }
 };
+
 
 // Initialize observer for Gmail inbox
 const initInboxObserver = () => {
@@ -39,7 +45,7 @@ const waitForInbox = () => {
       initInboxObserver();
       notifyBackground();    // initial fetch
     }
-  }, 1000);
+  }, 5000);
 };
 
 waitForInbox();

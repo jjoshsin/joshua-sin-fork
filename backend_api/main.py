@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routes.email_reciever_route import router as email_router
+from routes.emails_route import router as email_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="MailSense API", version="1.0")
